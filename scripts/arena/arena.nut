@@ -237,6 +237,8 @@ arena <- {
 	function onDeserialize(_in) {
 		clear();
 
+		logInfo("onDeserialize beginning\n");
+
 		m.NextCompositionID = _in.readI32();
 
 		m.ID = _in.readI32();
@@ -258,6 +260,7 @@ arena <- {
 		}
 
 		local numCompositions = _in.readU8();
+		logInfo("onDeserialize numCompositions = %d\n", numCompositions);
 		for (local i = 0; i < numCompositions; ++i) {
 			local composition = new(IO.scriptFilenameByHash(_in.readI32()));
 			composition.onDeserialize(_in);
@@ -265,8 +268,10 @@ arena <- {
 			m.Compositions.push(composition);
 		}
 
-		if (World.Statistics.getFlags().getAsInt("BDPVersion") >= 2)
+		if (World.Statistics.getFlags().getAsInt("BDPVersion") >= 2) {
+			logInfo("onDeserialize flags = %d\n", World.Statistics.getFlags().getAsInt("BDPVersion"));
 			m.AdditionalLoot.onDeserialize(_in);
+		}
 
 		if (m.ActiveTournament) {
 			m.FightsPerDay = ::BDP.Arena.TournamentCompositions;
